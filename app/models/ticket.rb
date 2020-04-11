@@ -10,13 +10,18 @@ class Ticket < ApplicationRecord
   private
     def update_stats_saved
       es = self.ticket_type.event.event_stat
-      es.tickets_sold+=1
-      es.attendance+=1
+      ev = self.ticket_type.event.event_venue
+      if es.attendance >= ev.capacity
+        puts 'Error! the amount of tickets sold for an event surpasses the capacity of the corresponding event venue.'
+      else
+        es.tickets_sold+=1
+        es.attendance+=1
+      end
     end
   end
   private
     def update_stats_destroyed
-      ed = self.ticket_type.event.event_stat
-      ed.tickets_sold-=1
-      ed.attendance-=1
+      es = self.ticket_type.event.event_stat
+      es.tickets_sold-=1
+      es.attendance-=1
     end
